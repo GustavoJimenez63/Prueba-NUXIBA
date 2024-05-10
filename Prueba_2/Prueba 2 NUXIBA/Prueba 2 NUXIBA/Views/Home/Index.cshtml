@@ -1,0 +1,277 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+
+
+<div class="card">
+
+    <div class="card-body">
+        <button type="button" class="btn btn-success" onclick="AbrirModal(null)"> <i class="fa fa-user-plus"></i> Crear Nuevo Usuarios</button>
+        <button type="button" class="btn btn-success" onclick="ExportarUsuarios()"> <i class="fa fa-user-plus"></i> Exportar Usuarios</button>
+        <hr />
+        <table id="TablaUsuarios" class="table table-striped" style="overflow:auto; width:100%;">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Login</th>
+                    <th>Nombre</th>
+                    <th> Apellido Paterno</th>
+                    <th>Apellido Materno</th>
+                    <th>Sueldo</th>
+                    <th>Fecha de Ingreso</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+
+
+
+
+
+<!-- Modal Agregar Usuarios -->
+<div class="modal fade" id="FormModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+           
+            <div class="modal-body g-2">
+
+                <input type="text" id="txtId" value="0" />
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <label for="txtNombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="txtNombre">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="txtLogin" class="form-label">Login</label>
+                        <input type="text" class="form-control" id="txtLogin">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="txtPaterno" class="form-label">Apellido Paterno</label>
+                        <input type="text" class="form-control" id="txtPaterno">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="txtMaterno" class="form-label">Apellido Materno</label>
+                        <input type="text" class="form-control" id="txtMaterno">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="txtSueldo" class="form-label">Sueldo</label>
+                        <input type="text" class="form-control" id="txtSueldo">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="txtFecha" class="form-label">Fecha De Ingreso Dia/Mes/Año</label>
+                        <input type="text" class="form-control" id="txtFecha">
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="ErrorModal" class="alert alert-danger" role="alert">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="Guardar()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts
+{
+    <script>
+
+        var TablaUsuarios;
+        var filaseleccionada;
+
+        TablaUsuarios = $("#TablaUsuarios").DataTable({
+            responsive: true,
+            "ajax": {
+                url: '@Url.Action("ListarUsuarios", "Home")',
+                type: "GET",
+                dataType: "json"
+            },
+            "columns": [
+                { "data": "userid" },
+                { "data": "Login" },
+                { "data": "Nombre" },
+                { "data": "Paterno" },
+                { "data": "Materno" },
+                { "data": "oEmpledos", "render": function (data) { return data.Sueldo } },
+                { "data": "oEmpledos", "render": function (data) { return data.FechaIngreso } },
+                {
+                    "defaultContent": '<button type="button" class="btn btn-success btn-editar">Editar</button>',
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "100px"
+
+                }
+
+            ],
+            "language": { "url":"https://cdn.datatables.net/plug-ins/2.0.6/i18n/es-MX.json"}
+
+        });
+
+
+        function ExportarUsuarios() {
+            var datos = TablaUsuarios.rows().data().toArray();
+
+
+            var csv = [];
+            var columnas = ['Id', 'Login', 'Nombre Completo', 'Sueldo', 'Fecha de Ingreso'];
+            csv.push(columnas.join(','));
+
+            datos.forEach(function (fila) {
+                var nombreCompleto = fila.Nombre + ' ' + fila.Paterno + ' ' + fila.Materno;
+                var filaCSV = [
+                    fila.userid,
+                    fila.Login,
+                    nombreCompleto,
+                    fila.oEmpledos.Sueldo,
+                    fila.oEmpledos.FechaIngreso
+                ];
+                csv.push(filaCSV.join(','));
+            });
+
+            var csvTexto = csv.join('\n');
+            var blob = new Blob([csvTexto], { type: 'text/csv;charset=utf-8;' });
+
+            var enlace = document.createElement('a');
+            if (navigator.msSaveBlob) { 
+                navigator.msSaveBlob(blob, 'usuarios.csv');
+            } else {
+                enlace.href = window.URL.createObjectURL(blob);
+                enlace.setAttribute('download', 'usuarios.csv');
+                document.body.appendChild(enlace);
+                enlace.click();
+                document.body.removeChild(enlace);
+            }
+        }
+
+
+
+
+        function AbrirModal(json) {
+            $("#txtId").val(0);
+            $("#txtNombre").val("");
+            $("#txtLogin").val("");
+            $("#txtPaterno").val("");
+            $("#txtMaterno").val("");
+            $("#txtSueldo").val("");
+            $("#txtFecha").val("-------------------");
+            $("#ErrorModal").hide();
+
+            if (json != null) {
+
+                $("#txtId").val(json.userid);
+                $("#txtNombre").val(json.Nombre);
+                $("#txtLogin").val(json.Login);
+                $("#txtPaterno").val(json.Paterno);
+                $("#txtMaterno").val(json.Materno);
+                $("#txtSueldo").val(json.oEmpledos.Sueldo);
+                $("#txtFecha").val(json.oEmpledos.FechaIngreso);
+            }
+
+            $("#FormModal").modal("show");
+        }
+
+
+
+
+        //Evento de editar usurios
+        $("#TablaUsuarios tbody").on("click", '.btn-editar', function () {
+
+            filaseleccionada = $(this).closest("tr");
+            console.log(TablaUsuarios.row(filaseleccionada).data());
+            var data = TablaUsuarios.row(filaseleccionada).data();
+
+            AbrirModal(data);
+        })
+
+
+
+
+
+
+        function Guardar() {
+
+            /*alert($("#txtId").val())*/
+            var Usuario = {
+                userid:$("#txtId").val(),
+                Nombre: $("#txtNombre").val(),
+                Login: $("#txtLogin").val(),
+                Paterno: $("#txtPaterno").val(),
+                Materno: $("#txtMaterno").val(),
+                oEmpledos: {
+                    Sueldo: $("#txtSueldo").val(),
+                    FechaIngreso: $("#txtFecha").val(),
+                    userid:$("#txtId").val(),
+                },
+                }
+
+            //Haciendo solicitud  AJAX hacia el controlador
+            jQuery.ajax({
+                url: '@Url.Action("Guardar", "Home")',
+                type: "POST",
+                data: JSON.stringify({ obj: Usuario }),
+                dataType: "json",
+                contentType: "application/JSON; charset.utf-8",
+                success: function (data) {
+
+                    console.log(Usuario);
+                    if (Usuario.userid == 0) {
+
+                        if (data.resultado != 0) {
+                            Usuario.userid = data.resultado;
+                            TablaUsuarios.row.add(Usuario).draw(false);
+                            $("#FormModal").modal("hide");
+                        } else {
+                            $("#ErrorModal").text(data.mensaje);
+                            $("#ErrorModal").show();
+
+                        }
+                    } else {
+                        if (data.resultado == true) {
+                            TablaUsuarios.row(filaseleccionada).data(Usuario).draw(false);
+                            console.log(Usuario);
+                            $("#FormModal").modal("hide");
+                        } else {
+                            $("#ErrorModal").text(data.mensaje);
+                            $("#ErrorModal").show();
+                        }
+                    }
+                },
+                error: function (error) {
+
+                },
+                beforeSend: function () {
+                  
+                }
+
+
+            });
+        }
+
+    </script>
+}

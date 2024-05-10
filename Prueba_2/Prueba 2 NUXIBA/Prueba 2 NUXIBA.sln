@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34601.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prueba 2 NUXIBA", "Prueba 2 NUXIBA\Prueba 2 NUXIBA.csproj", "{88A241AE-24A8-4CEF-99EE-757CBCA9346C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CapaEntidad", "CapaEntidad\CapaEntidad.csproj", "{56247C76-6E19-4980-B266-EF02AB36007B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88A241AE-24A8-4CEF-99EE-757CBCA9346C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88A241AE-24A8-4CEF-99EE-757CBCA9346C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88A241AE-24A8-4CEF-99EE-757CBCA9346C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88A241AE-24A8-4CEF-99EE-757CBCA9346C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56247C76-6E19-4980-B266-EF02AB36007B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56247C76-6E19-4980-B266-EF02AB36007B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56247C76-6E19-4980-B266-EF02AB36007B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56247C76-6E19-4980-B266-EF02AB36007B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B95988DD-9F71-4802-97EB-97C21C84D09A}
+	EndGlobalSection
+EndGlobal
